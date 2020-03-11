@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block content %}
+{{ pagination.links }}
+<table class="table  table-striped ">
+  <thead class="bg-secondary text-light">
+    <tr>
+      <th  class="th-sm">Last seen</th>
+      <th  class="th-sm">Title</th>
+      <th  class="th-sm">Screenshot</th>
+      <th  class="th-sm">Tags</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for one_ad in data %}
+    <tr>
+      <td>{{loop.index}}.{{ one_ad.modified.strftime('%Y-%m-%d') }}</td>
+      <td>{{one_ad.title}}</td>
+      <td>{{ one_ad.screenshot }}</td>
+      <td>
+        <form action="{{ url_for('add_tag') }}" method="post">
+          {% if one_ad.tags %}
+            {% for tag in one_ad.tags %}
+              {% if tag in tags %}
+                <div class="btn btn-sm btn-dark">{{ tag }}</div>
+              {% else %}
+                <input type="submit" name="add_filter_tag" value="{{ tag }}" class="btn btn-sm btn-outline-dark">
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </form>
+
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{{ pagination.links }}
+{% endblock content %}
