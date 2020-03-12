@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 {% block content %}
-{{ pagination.links }}
+<div class="clearfix">
+  <div class="float-left">{{ pagination.links }}</div>
+  <div  class="float-right">{{ pagination.info }}</div>
+</div>
 <table class="table  table-striped ">
   <thead class="bg-secondary text-light">
     <tr>
@@ -14,7 +17,15 @@
     {% for one_ad in data %}
     <tr>
       <td>{{loop.index}}.{{ one_ad.modified.strftime('%Y-%m-%d') }}</td>
-      <td>{{one_ad.title}}</td>
+<!--      <td>
+        <a type="button" class="btn btn-lg btn-danger"  data-toggle="popover"title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">{{one_ad.title}}</a></td>-->
+      <td>
+
+        <button type="button" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+          Popover on top
+        </button>
+      </td>
+
       <td>{{ one_ad.screenshot }}</td>
       <td>
         <form action="{{ url_for('add_tag') }}" method="post">
@@ -28,11 +39,13 @@
             {% endfor %}
           {% endif %}
         </form>
-
       </td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
-{{ pagination.links }}
+<div class="clearfix">
+  <div class="float-left">{{ pagination.links }}</div>
+  <div  class="float-right">{{ pagination.info }}</div>
+</div>
 {% endblock content %}

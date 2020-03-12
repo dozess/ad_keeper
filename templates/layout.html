@@ -11,7 +11,8 @@
     <title>ad_keeper</title>
 </head>
 <body>
-    <nav class="navbar fixed-top navbar-expand-md navbar-dark  bg-secondary text-light ">
+    <nav class="navbar fixed-top navbar-expand-md navbar-dark  bg-secondary
+     text-light ">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -51,7 +52,7 @@
     <main role="main" class="container-fluid">
 
         <div class="row pt-4">
-            <div class="col-md-10">
+            <div class="col-md-9">
               {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                   {% for category, message in messages %}

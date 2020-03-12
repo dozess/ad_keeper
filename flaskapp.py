@@ -54,4 +54,4 @@ per_page = 25
 base_filter = {'status': 'complete'}
 tag_filter = []
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
