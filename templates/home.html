@@ -1,49 +1,117 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="clearfix">
-  <div class="float-left">{{ pagination.links }}</div>
-  <div  class="float-right">{{ pagination.info }}</div>
-</div>
-<table class="table  table-striped ">
-  <thead class="bg-secondary text-light">
-    <tr>
-      <th  class="th-sm">Last seen</th>
-      <th  class="th-sm">Title</th>
-      <th  class="th-sm">Screenshot</th>
-      <th  class="th-sm">Tags</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for one_ad in data %}
-    <tr>
-      <td>{{loop.index}}.{{ one_ad.modified.strftime('%Y-%m-%d') }}</td>
-<!--      <td>
-        <a type="button" class="btn btn-lg btn-danger"  data-toggle="popover"title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">{{one_ad.title}}</a></td>-->
-      <td>
 
-        <button type="button" class="btn btn-secondary" data-container="body" data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
-          Popover on top
-        </button>
-      </td>
+    <!-- paginator info ao records -->
+    <div class="clearfix">
+        <div class="float-left text-dark">{{ pagination.links }}</div>
+        <div  class="float-right">{{ pagination.info }}</div>
+    </div>
 
-      <td>{{ one_ad.screenshot }}</td>
-      <td>
-        <form action="{{ url_for('add_tag') }}" method="post">
-          {% if one_ad.tags %}
-            {% for tag in one_ad.tags %}
-              {% if tag in tags %}
-                <div class="btn btn-sm btn-dark">{{ tag }}</div>
-              {% else %}
-                <input type="submit" name="add_filter_tag" value="{{ tag }}" class="btn btn-sm btn-outline-dark">
-              {% endif %}
-            {% endfor %}
-          {% endif %}
-        </form>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+    <div id="module" class="container-flex">
+        {% for one_ad in data %}
+            <div class="row">
+                <div class="col-auto" >
+                    {% if one_ad.photos %}
+                        <div class="d-flex justify-content-center align-items-center bg-light m-2 border shadow rounded-sm" style="width: 137px; height: 137px;">
+                            <div><img class="rounded-sm" src="{{ one_ad.photos.0.th_url }} " ></div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="col">
+
+                            <!-- start of ad card -->
+                            <div class="card shadow m-2">
+                                <div class="card-header pb-1">
+                                    <div class="row-flex">
+                                        <div class="float-left">
+                                            <h6>
+                                                {{ one_ad.title }}
+                                            </h6>
+                                        </div>
+
+                                        <div class="float-right">
+                                            <div class="btn-group">
+                                                <small class="text-muted mr-2">Last seen on {{ one_ad.modified.strftime('%Y-%m-%d') }}</small>
+                                                <a data-toggle="collapse" href="#semi-collapse{{ loop.index }}" aria-expanded="false" aria-controls="semi-collapse{{ loop.index }}"  class="collapsed">
+                                                    <i class="fa fa-chevron-down text-dark "></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+
+                                <div class="card-body pb-2 pt-2">
+ <!-- wraperis uzdeti seseliui is apacios                                  <div id="fade">
+                                        <div class="container">  -->
+
+                                            <div id="semi-collapse{{ loop.index }}" class="collapse cotainer " aria-expanded="false" >
+
+                                                {% autoescape false %}
+                                                <p class="article-content sm">{{ one_ad.ad_text | replace("\n","<br/>") }}</p>
+                                                {% endautoescape %}
+                                                City : {{ one_ad.cities }}
+                                                <div class="row">
+
+                                                    {% if one_ad.photos %}
+                                                        {% for photo in one_ad.photos %}
+                                                            {% if loop.index == 5 %}
+                                                                <div class="d-flex justify-content-center align-items-center bg-light m-1 border rounded-sm" style="width: 137px; height: 137px;">
+                                                                    <a href="#">...</a>
+                                                                </div>
+                                                            {% else %}
+                                                                {% if loop.index < 5 and loop.index > 1 %}
+                                                                    <div class="float-left m-1"><img src="{{ photo.th_url }}" alt="{{photo.local_file}}" class="rounded"></div>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                    <div class="float-left m-1"><img src="{{ one_ad.th_scr_url }}" alt="{{th_scr_url}}" class="rounded"></div>
+
+                                                </div>
+<!-- seselio wraperio pabaiga                                            </div>
+                                        </div> -->
+                                    </div>
+
+
+                                    <div class="dropdown-divider mt-0"></div>
+                                    <div class="clear-fix">
+                                        <div class="float-left">
+
+                                            <span class="btn btn-sm m-1 float-left">Ad categories:</span>
+                                            {% if one_ad.tags %}
+                                                {% for tag in one_ad.tags %}
+                                                    {% if tag in tags %}
+                                                        <form action="{{ url_for('remove_tag') }}" method="post" class="float-left">
+                                                            <input type="submit" name="remove_filter_tag" value="{{ tag }}" class="btn btn-sm m-1 btn-secondary">
+                                                        </form>
+                                                    {% else %}
+                                                        <form action="{{ url_for('add_tag') }}" method="post" class="float-left">
+                                                            <input type="submit" name="add_filter_tag" value="{{ tag }}" class="btn shadow-sm btn-sm m-1 btn-outline-dark">
+                                                        </form>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                        <div class="float-right">
+                                            <a href="{{ one_ad.url }}" class="m-2 float-right">     <i class="fas fa-external-link-alt"></i></a>
+                                        </div>
+                                    </div> <!-- end of category buttons group-->
+
+                                </div> <!-- end of card body-->
+
+
+                            </div> <!-- end of card -->
+
+
+                </div>
+            </div>
+        {% endfor %}
+    </div class="container">
+
 <div class="clearfix">
   <div class="float-left">{{ pagination.links }}</div>
   <div  class="float-right">{{ pagination.info }}</div>
