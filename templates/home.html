@@ -10,7 +10,9 @@
     <div id="module" class="container-flex">
         {% for one_ad in data %}
             <div class="row">
-                <div class="col-auto" >
+
+<!--         first photo preview on the left       -->
+                <div class="col-auto pr-0" >
                     {% if one_ad.photos %}
                         <div class="d-flex justify-content-center align-items-center bg-light m-2 border shadow rounded-sm" style="width: 137px; height: 137px;">
                             <div><img class="rounded-sm" src="{{ one_ad.photos.0.th_url }} " ></div>
@@ -18,22 +20,26 @@
                     {% endif %}
                 </div>
 
-                <div class="col">
+                <div class="col pl-0">
 
-                            <!-- start of ad card -->
+
+
+<!--          start of ad card -->
                             <div class="card shadow m-2">
-                                <div class="card-header pb-1">
+
+<!--          start of card header  -->
+                                <div class="card-header pb-1 position-relative">
                                     <div class="row-flex">
                                         <div class="float-left">
                                             <h6>
-                                                {{ one_ad.title }}<i class="far fa-folder-open ml-3"  data-toggle="tooltip" title="Open this ad"></i>
+                                                {{ one_ad.title }}
                                             </h6>
                                         </div>
 
-                                        <div class="float-right">
-                                            <div class="btn-group">
+                                        <div class="float-right ">
+                                            <div class="btn-group position-static">
                                                 <small class="text-muted mr-2">Last seen on {{ one_ad.modified.strftime('%Y-%m-%d') }}</small>
-                                                <a data-toggle="collapse" href="#semi-collapse{{ loop.index }}" aria-expanded="false" aria-controls="semi-collapse{{ loop.index }}"  class="collapsed">
+                                                <a data-toggle="collapse" href="#semi-collapse{{ loop.index }}" aria-expanded="false" aria-controls="semi-collapse{{ loop.index }} "  class="collapsed stretched-link">
                                                     <i class="fas fa-chevron-down" data-toggle="tooltip" title="Expand / decrease preview"></i>
                                                 </a>
                                             </div>
@@ -51,7 +57,7 @@
                                             <div id="semi-collapse{{ loop.index }}" class="collapse cotainer " aria-expanded="false" >
 
                                                 {% autoescape false %}
-                                                <p class="article-content sm">{{ one_ad.ad_text | replace("\n","<br/>") }}</p>
+                                                    <p class="article-content sm">{{ one_ad.ad_text | replace("\n","<br/>") }}</p>
                                                 {% endautoescape %}
                                                 City : {{ one_ad.cities }}
                                                 <div class="row">
@@ -59,8 +65,8 @@
                                                     {% if one_ad.photos %}
                                                         {% for photo in one_ad.photos %}
                                                             {% if loop.index == 5 %}
-                                                                <div class="d-flex justify-content-center align-items-center bg-light m-1 border rounded-sm" style="width: 137px; height: 137px;">
-                                                                    <a href="#"><i class="fas fa-angle-double-right"></i></a>
+                                                                <div class="d-flex justify-content-center align-items-center bg-light m-1 border rounded-sm" style="width: 137px; height: 137px; position: relative;" data-toggle="tooltip" title="Open ad for more photos">
+                                                                    <a href="#" class="stretched-link"><i class="fas fa-angle-double-right fa-3x" ></i></a>
                                                                 </div>
                                                             {% else %}
                                                                 {% if loop.index < 5 and loop.index > 1 %}
@@ -78,8 +84,8 @@
 
 
                                     <div class="dropdown-divider mt-0"></div>
-                                    <div class="clear-fix">
-                                        <div class="float-left">
+                                    <div class="d-flex">
+                                        <div class="flex-grow-1">
 
                                             <span class="btn btn-sm m-1 float-left">Ad categories:</span>
                                             {% if one_ad.tags %}
@@ -99,9 +105,11 @@
                                                 {% endfor %}
                                             {% endif %}
                                         </div>
-                                        <div class="float-right">
-                                            <a href="{{ one_ad.url }}" target="_blank" class="m-2 float-right">     <i class="fas fa-external-link-alt" data-toggle="tooltip" title="Open original ad on the website"></i></a>
-                                        </div>
+
+                                         <div class="none">
+                                             <a href="#" class="m-2 float-right" class="btn-sm m-1  float-right"><i class="fas fa-search-plus"></i></a>
+                                             <a href="{{ one_ad.url }}" target="_blank" class="btn-sm m-1  float-right"><i class="fas fa-external-link-alt" data-toggle="tooltip" title="Open original ad on the website"></i></a>
+                                         </div>
                                     </div> <!-- end of category buttons group-->
 
                                 </div> <!-- end of card body-->

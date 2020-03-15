@@ -89,9 +89,10 @@
         <span></span>
     </nav>
     {% endif %}
-    <main role="main" class="container-fluid">
 
-        <div class="row pt-4">
+    <main role="main" class="d-flex pt-5 justify-content-around">
+
+
             <div class="col-md-8">
               {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
@@ -117,7 +118,7 @@
                 </p>
               </div>
             </div>
-      </div>
+
     </main>
 
 </body>
