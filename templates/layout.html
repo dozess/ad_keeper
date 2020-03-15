@@ -11,10 +11,10 @@
 
     <!-- expanding post windows scripts-->
     <style>
-        #module .card-header .fa {
+        #module .card-header .fas {
           transition: .3s transform ease-in-out;
         }
-        #module .card-header .collapsed .fa {
+        #module .card-header .collapsed .fas {
           transform: rotate(90deg);
         }
 
@@ -92,7 +92,7 @@
     <main role="main" class="container-fluid">
 
         <div class="row pt-4">
-            <div class="col-md-9">
+            <div class="col-md-8">
               {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                   {% for category, message in messages %}
