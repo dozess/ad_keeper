@@ -1,4 +1,5 @@
 import pymongo
+from bson.objectid import ObjectId
 from flask import Flask, request, url_for, redirect, render_template, abort, send_from_directory, session, safe_join
 from flask_paginate import Pagination, get_page_parameter
 import flask_resize
@@ -37,6 +38,17 @@ def showAll():
             rec['th_scr_url']=resize(app.config['RESIZE_ROOT']+rec['screenshot'], '135x135',  format='jpg')
     return render_template('home.html', data = mongo_data, pagination =pagination, tags=session['tag_filter'], data_filter = filter)
 
+@app.route('/zoom/<id>', methods=["GET",])
+def zoom_ad(id):
+    record = db.skelbimai.find_one({'_id':ObjectId(id)})
+
+    if 'photos' in record:
+        for img in record['photos']:
+            img['local_file']=img['local_file'].replace('\\','/')
+            img['med_url']=resize(app.config['RESIZE_ROOT']+img['local_file'], '800x800',  format='jpg')
+    if 'screenshot' in record:
+        record['med_scr_url']=resize(app.config['RESIZE_ROOT']+record['screenshot'], '800x800',  format='jpg')
+    return render_template('view.html', data = record)
 
 
 
@@ -82,4 +94,4 @@ per_page = 25
 base_filter = {'status': 'complete'}
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=False, host='0.0.0.0')
