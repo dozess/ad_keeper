@@ -15,7 +15,7 @@
                 <div class="col-auto pr-0" >
                     {% if one_ad.photos %}
                         <div class="d-flex justify-content-center align-items-center bg-light m-2 border shadow rounded-sm" style="width: 137px; height: 137px;">
-                            <div><img class="rounded-sm" src="{{ one_ad.photos.0.th_url }} " ></div>
+                            <div><a href="{{ url_for('zoom_ad', id=one_ad._id )}}"><img class="rounded-sm" src="{{ one_ad.photos.0.th_url }} " ></a></div>
                         </div>
                     {% endif %}
                 </div>
