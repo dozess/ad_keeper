@@ -3,7 +3,8 @@ from bson.objectid import ObjectId
 from flask import Flask, request, url_for, redirect, render_template, abort, send_from_directory, session, safe_join
 from flask_paginate import Pagination, get_page_parameter
 import flask_resize
-from os import isfile
+from os.path import isfile
+import json
 
 app = Flask(__name__)
 
@@ -18,13 +19,13 @@ else:
     import sys
     sys.exit()
 
-app.config['SECRET_KEY'] = config.grt('SECRET_KEY')
-app.config['RESIZE_URL'] = config.grt('RESIZE_URL')
-app.config['RESIZE_ROOT'] = config.grt('RESIZE_ROOT')
-app.config['RESIZE_TARGET_DIRECTORY'] = config.grt('RESIZE_TARGET_DIRECTORY')
-app.config['DB_CONNECT'] = config.grt('DB_CONNECT')
-app.config['APP_BIND_IP'] = config.grt('APP_BIND_IP')
-app.config['APP_DEBUG'] = config.grt('APP_DEBUG')
+app.config['SECRET_KEY'] = config.get('SECRET_KEY')
+app.config['RESIZE_URL'] = config.get('RESIZE_URL')
+app.config['RESIZE_ROOT'] = config.get('RESIZE_ROOT')
+app.config['RESIZE_TARGET_DIRECTORY'] = config.get('RESIZE_TARGET_DIRECTORY')
+app.config['DB_CONNECT'] = config.get('DB_CONNECT')
+app.config['APP_BIND_IP'] = config.get('APP_BIND_IP')
+app.config['APP_DEBUG'] = config.get('APP_DEBUG')
 
 resize = flask_resize.Resize(app)
 
