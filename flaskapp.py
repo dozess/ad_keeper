@@ -49,6 +49,7 @@ def showAll():
                 if index > 4 : pass
                 img_path = None
                 img_path = (app.config['RESIZE_ROOT']+img['local_file']).replace('\\','/')
+                print('\n\n{}\n\n'.format(img_path))
                 try:
                     img['th_url']=resize(img_path, '135x135',  format='jpg')
                 except:
