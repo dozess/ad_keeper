@@ -6,13 +6,17 @@ import flask_resize
 
 
 app = Flask(__name__)
+
+
 app.config['SECRET_KEY']='0612dec6be4c1d5412cf8c7d5df7fc60'
 app.config['RESIZE_URL'] = '/'
 app.config['RESIZE_ROOT'] = 'F:\\image_archyve\\'
 app.config['RESIZE_TARGET_DIRECTORY'] = 'resized-images'
+app.config['DB_CONNECT'] = 'mongodb://192.168.1.111:27017'
+app.config['BIND_IP'] = '0.0.0.0'
+app.config['APP_DEBUG'] = True
 
 resize = flask_resize.Resize(app)
-
 
 @app.route('/', methods=["GET", "POST"])
 def showAll():
@@ -32,10 +36,19 @@ def showAll():
         if 'photos' in rec:
             for index, img in enumerate(rec['photos']):
                 if index > 4 : pass
-                img['local_file']=img['local_file'].replace('\\','/')
-                img['th_url']=resize(app.config['RESIZE_ROOT']+img['local_file'], '135x135',  format='jpg')
+                img_path = None
+                img_path = (app.config['RESIZE_ROOT']+img['local_file']).replace('\\','/')
+                try:
+                    img['th_url']=resize(img_path, '135x135',  format='jpg')
+                except:
+                    img['th_url']='https://picsum.photos/135'
         if 'screenshot' in rec:
-            rec['th_scr_url']=resize(app.config['RESIZE_ROOT']+rec['screenshot'], '135x135',  format='jpg')
+            img_path = None
+            img_path = (app.config['RESIZE_ROOT']+rec['screenshot']).replace('\\','/')
+            try:
+                rec['th_scr_url']=resize(img_path, '135x135',  format='jpg')
+            except:
+                img['th_url'] = 'https://picsum.photos/135'
     return render_template('home.html', data = mongo_data, pagination =pagination, tags=session['tag_filter'], data_filter = filter)
 
 @app.route('/zoom/<id>', methods=["GET",])
@@ -88,10 +101,10 @@ def test():
 
 
 # Mongo Connect
-db = pymongo.MongoClient(host="mongodb://localhost:27017").skelbimai
+db = pymongo.MongoClient(host=app.config['DB_CONNECT']).skelbimai
 
 per_page = 25
 base_filter = {'status': 'complete'}
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0')
+    app.run(debug=app.config['APP_DEBUG'], host=app.config['APP_BIND_IP'])
