@@ -3,18 +3,28 @@ from bson.objectid import ObjectId
 from flask import Flask, request, url_for, redirect, render_template, abort, send_from_directory, session, safe_join
 from flask_paginate import Pagination, get_page_parameter
 import flask_resize
-
+from os import isfile
 
 app = Flask(__name__)
 
+if isfile('/etc/ad_keeper_cfg.json'):
+    with open('/etc/ad_keeper_cfg.json') as config_file:
+        config = json.load(config_file)
+elif isfile('ad_keeper_cfg.json'):
+    with open('ad_keeper_cfg.json') as config_file:
+        config = json.load(config_file)
+else:
+    print('Cannot locate configuration file.')
+    import sys
+    sys.exit()
 
-app.config['SECRET_KEY']='0612dec6be4c1d5412cf8c7d5df7fc60'
-app.config['RESIZE_URL'] = '/'
-app.config['RESIZE_ROOT'] = 'F:\\image_archyve\\'
-app.config['RESIZE_TARGET_DIRECTORY'] = 'resized-images'
-app.config['DB_CONNECT'] = 'mongodb://192.168.1.111:27017'
-app.config['BIND_IP'] = '0.0.0.0'
-app.config['APP_DEBUG'] = True
+app.config['SECRET_KEY'] = config.grt('SECRET_KEY')
+app.config['RESIZE_URL'] = config.grt('RESIZE_URL')
+app.config['RESIZE_ROOT'] = config.grt('RESIZE_ROOT')
+app.config['RESIZE_TARGET_DIRECTORY'] = config.grt('RESIZE_TARGET_DIRECTORY')
+app.config['DB_CONNECT'] = config.grt('DB_CONNECT')
+app.config['APP_BIND_IP'] = config.grt('APP_BIND_IP')
+app.config['APP_DEBUG'] = config.grt('APP_DEBUG')
 
 resize = flask_resize.Resize(app)
 
