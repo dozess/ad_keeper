@@ -211,7 +211,7 @@ def remove_tag():
 
 @app.route('/resized-images/<path:filename>', methods=["GET"])
 def serve_media_file(filename):
-    return send_from_directory( 'F:\\image_archyve\\resized-images\\' , filename)
+    return send_from_directory( path.join(app.config['RESIZE_ROOT'], app.config['RESIZE_TARGET_DIRECTORY'] ), filename)
 
 
 
