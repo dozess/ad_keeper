@@ -102,7 +102,7 @@ def url_for_resized_image(file_name, dim, bg_color=None, rad=None, mask_fn=None)
     new_fn = sha224(string_to_encode).hexdigest() + ext
     #response += 'New filename: {}\n'.format(new_fn)
 
-    new_full_path = path.join(path.join(app.config['RESIZE_ROOT'], app.config['RESIZE_TARGET_DIRECTORY'] ),new_fn).replace('\\','/')
+    new_full_path = path.join(path.join(app.config['RESIZE_ROOT'], app.config['RESIZE_TARGET_DIRECTORY'] ),new_fn).replace('\\','/').encode('utf-8').decode()
     ##response += 'New local full path : {}\n'.format(new_full_path)
 
     if path.isfile(new_full_path):
