@@ -90,7 +90,7 @@ def url_for_resized_image(file_name, dim, bg_color=None, rad=None, mask_fn=None)
     :return: URL for recised image cashed in folder's  app.config['RESIZE_TARGET_DIRECTORY']  subfolder
     app.config['RESIZE_TARGET_DIRECTORY']
     """
-    full_path = app.config['RESIZE_ROOT']+ file_name
+    full_path = (app.config['RESIZE_ROOT']+ file_name).replace('\\','/')
     img_dim = [int(s) for s in dim.split('x')]
 
 
@@ -102,7 +102,7 @@ def url_for_resized_image(file_name, dim, bg_color=None, rad=None, mask_fn=None)
     new_fn = sha224(string_to_encode).hexdigest() + ext
     #response += 'New filename: {}\n'.format(new_fn)
 
-    new_full_path = path.join(path.join(app.config['RESIZE_ROOT'], app.config['RESIZE_TARGET_DIRECTORY'] ),new_fn)
+    new_full_path = path.join(path.join(app.config['RESIZE_ROOT'], app.config['RESIZE_TARGET_DIRECTORY'] ),new_fn).replace('\\','/')
     ##response += 'New local full path : {}\n'.format(new_full_path)
 
     if path.isfile(new_full_path):
