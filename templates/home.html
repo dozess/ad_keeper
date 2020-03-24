@@ -64,18 +64,20 @@
 
                                                     {% if one_ad.photos %}
                                                         {% for photo in one_ad.photos %}
-                                                            {% if loop.index == 5 %}
-                                                                <div class="d-flex justify-content-center align-items-center bg-light m-1 border rounded-sm" style="width: 137px; height: 137px; position: relative;" data-toggle="tooltip" title="Open ad for more photos">
-                                                                    <a href="#" class="stretched-link"><i class="fas fa-angle-double-right fa-3x" ></i></a>
-                                                                </div>
-                                                            {% else %}
-                                                                {% if loop.index < 5 and loop.index > 1 %}
-                                                                    <div class="float-left m-1"><img src="{{ photo.th_url }}" alt="{{photo.local_file}}" class="rounded"></div>
+                                                            {% if loop.index < 5 and loop.index > 1 %}
+                                                                <div class="float-left m-1"><a href="{{ url_for('zoom_ad', id=one_ad._id )}}" class=""><img src="{{ photo.th_url }}" alt="{{photo.local_file}}" class="rounded"></a></div>
+                                                            {% endif %}
+                                                            {% if loop.last %}
+                                                                <div class="float-left m-1"><a href="{{ url_for('zoom_ad', id=one_ad._id )}}" class=""><img src="{{ one_ad.th_scr_url }}" alt="{{th_scr_url}}" class="rounded"></a></div>
+                                                                {% if loop.index > 4 %}
+                                                                    <div class="d-flex justify-content-center align-items-center bg-light m-1 border rounded-sm" style="width: 137px; height: 137px; position: relative;" data-toggle="tooltip" title="Open ad for more photos">
+                                                                        <a href="{{ url_for('zoom_ad', id=one_ad._id )}}" class="stretched-link"><i class="fas fa-angle-double-right fa-3x" ></i></a>
+                                                                    </div>
                                                                 {% endif %}
                                                             {% endif %}
                                                         {% endfor %}
+
                                                     {% endif %}
-                                                    <div class="float-left m-1"><img src="{{ one_ad.th_scr_url }}" alt="{{th_scr_url}}" class="rounded"></div>
 
                                                 </div>
 <!-- seselio wraperio pabaiga                                            </div>
@@ -107,7 +109,7 @@
                                         </div>
 
                                          <div class="none">
-                                             <a href="#" class="m-2 float-right" class="btn-sm m-1  float-right"><i class="fas fa-search-plus"></i></a>
+                                             <a href="{{ url_for('zoom_ad', id=one_ad._id )}}" class="m-2 float-right" class="btn-sm m-1  float-right"><i class="fas fa-search-plus"></i></a>
                                              <a href="{{ one_ad.url }}" target="_blank" class="btn-sm m-1  float-right"><i class="fas fa-external-link-alt" data-toggle="tooltip" title="Open original ad on the website"></i></a>
                                          </div>
                                     </div> <!-- end of category buttons group-->
