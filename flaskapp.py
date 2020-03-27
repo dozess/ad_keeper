@@ -33,7 +33,6 @@ app.config['APP_DEBUG'] = config.get('APP_DEBUG')
 
 #resize = flask_resize.Resize(app)
 
-# image rounded corners
 def add_corners(img, rad):
     """
     function to make transperent rounded corners
@@ -53,7 +52,6 @@ def add_corners(img, rad):
     img.putalpha(alpha)
     return img
 
-
 def resize_image(img, dim,bg_color,rad, mask_img):
 
     ratio = min ( [float(dim[i])/float(img.size[i]) for i in range(2)])
@@ -63,16 +61,12 @@ def resize_image(img, dim,bg_color,rad, mask_img):
         method = Image.LANCZOS
     else:
         return img
-
+    # TODO: idėti backgroundo generavimą
+    # TODO: pridėti watermarko funkcionalumą
+    # TODO: pridėti kampų nuapvalinimą
     new_dim = [int(img.size[i]*ratio) for i in range(2)]
     img = img.resize(new_dim, method)
-
     return img
-
-
-
-
-
 
 def url_for_resized_image(file_name, dim, bg_color=None, rad=None, mask_fn=None):
     """
@@ -92,44 +86,27 @@ def url_for_resized_image(file_name, dim, bg_color=None, rad=None, mask_fn=None)
     """
     full_path = (app.config['RESIZE_ROOT']+ file_name).replace('\\','/')
     img_dim = [int(s) for s in dim.split('x')]
-
-
     img_path, fn = path.split(file_name)
-
     ext = path.splitext(fn)[-1]
     string_to_encode = (file_name + dim + str(bg_color) + str(rad) + str(mask_fn) ).encode('utf-8')
-    #response += 'File name to encode: {}\n'.format(string_to_encode)
     new_fn = sha224(string_to_encode).hexdigest() + ext
-    #response += 'New filename: {}\n'.format(new_fn)
-
     new_full_path = path.join(path.join(app.config['RESIZE_ROOT'], app.config['RESIZE_TARGET_DIRECTORY'] ),new_fn).replace('\\','/').encode('utf-8').decode()
-    ##response += 'New local full path : {}\n'.format(new_full_path)
 
     if path.isfile(new_full_path):
+        # TODO: pridėti 'touch' funkciją, kad pakeistų failo modified datą, vėliau bus galima atsekti nebenaudojamus thumbnilus
         pass
     else:
-
         src = Image.open(full_path)
-
 
         if mask_fn:
             mask_img = Image.open(path.join(app.config['RESIZE_ROOT'], mask_fn ))
-            #response += 'Opened mask image {} sucessfully\n'.format(path.join(app.config['RESIZE_ROOT'], mask_fn ))
         else:
             mask_img = None
-            #response += 'Mask image is not required\n'
-
-
 
         src = resize_image(src, img_dim, bg_color, rad, mask_img)
         src.save(new_full_path)
 
-
-    ##response += 'Image opened sucessfully\n'
-    ##response += 'Image dimentions will be {} x {}\n'.format(img_dim[0], img_dim[1])
-    ##response += 'Image saved sucsesfuly.\n'
     img_url =  safe_join(safe_join(app.config['RESIZE_URL'], app.config['RESIZE_TARGET_DIRECTORY']), new_fn)
-    ##response += 'Image available at: {}\n'.format(img_url)
 
     return img_url#, #response
 
@@ -153,7 +130,47 @@ def showAll():
     if session['tag_filter'] != []:
         filter['tags'] = {'$all':session['tag_filter'].copy()}
 
+    search_string = request.args.get('s', type=str, default='oi')
+    if search_string !='':
+        #filter['ad_text'] = { '$regex' :search_string}
+        filter['$or'] = [{'ad_text' : {'$regex': search_string}}, {'title' : {'$regex': search_string}}]
+
     current_page = request.args.get(get_page_parameter(), type=int, default=1)
+    pagination =Pagination(page=current_page, total=db.skelbimai.count_documents(filter), per_page= per_page, css_framework='bootstrap', bs_version='4')
+
+    mongo_data = list(db.skelbimai.find(filter).sort(sort).skip((current_page-1)*per_page).limit(per_page))
+
+    for rec in mongo_data:
+        if 'photos' in rec:
+            for index, img in enumerate(rec['photos']):
+                if index > 4 : pass
+                img['th_url'] = url_for_resized_image(img['local_file'], '135x135')
+        if 'screenshot' in rec:
+            img_path = None
+            img_path = (rec['screenshot']).replace('\\','/')
+            try:
+                rec['th_scr_url']=url_for_resized_image(img_path, '135x135')
+            except:
+                rec['th_scr_url'] = 'https://picsum.photos/135'
+    return render_template('home.html', data = mongo_data, pagination =pagination, tags=session['tag_filter'], data_filter = filter, search = search_string)
+
+
+@app.route('/search/', methods=["GET", "POST"])
+def showSome():
+    sort = [('modified',-1)]
+    filter = base_filter.copy()
+    #if not 'tag_filter' in session:
+    #    session['tag_filter'] = []
+    #if session['tag_filter'] != []:
+    #    filter['tags'] = {'$all':session['tag_filter'].copy()}
+
+    current_page = request.args.get(get_page_parameter(), type=int, default=1)
+    search_string = request.args.get('s', type=str, default='oi')
+    print('\n\n{}\n\n'.format(search_string))
+    if search_string !='':
+        filter['ad_text'] = { '$regex' :search_string}
+
+
     pagination =Pagination(page=current_page, total=db.skelbimai.count_documents(filter), per_page= per_page, css_framework='bootstrap', bs_version='4')
 
     mongo_data = list(db.skelbimai.find(filter).sort(sort).skip((current_page-1)*per_page).limit(per_page))
