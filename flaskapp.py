@@ -110,7 +110,7 @@ def url_for_resized_image(file_name, dim, bg_color=None, rad=None, mask_fn=None)
 
     return img_url#, #response
 
-# test
+# test teporary rout
 @app.route("/test/", methods=["GET"])
 def test():
     mongo_data = db.skelbimai.find_one({'site_id':'46830447'})
@@ -130,8 +130,9 @@ def showAll():
     if session['tag_filter'] != []:
         filter['tags'] = {'$all':session['tag_filter'].copy()}
 
-    search_string = request.args.get('s', type=str, default='oi')
+    search_string = request.args.get('s', type=str, default='')
     if search_string !='':
+        # TODO: papildyti serch funkcionalumą kad būtų galima ir per tagus ieškoti
         #filter['ad_text'] = { '$regex' :search_string}
         filter['$or'] = [{'ad_text' : {'$regex': search_string}}, {'title' : {'$regex': search_string}}]
 
@@ -144,50 +145,20 @@ def showAll():
         if 'photos' in rec:
             for index, img in enumerate(rec['photos']):
                 if index > 4 : pass
-                img['th_url'] = url_for_resized_image(img['local_file'], '135x135')
+                try:
+                    img['th_url'] = url_for_resized_image(img['local_file'], '135x135')
+                except:
+                    # TODO: idėti pilką klaidos paveiksliuką
+                    img['th_url'] = 'https://picsum.photos/135'
         if 'screenshot' in rec:
             img_path = None
             img_path = (rec['screenshot']).replace('\\','/')
             try:
                 rec['th_scr_url']=url_for_resized_image(img_path, '135x135')
             except:
+                # TODO: idėti pilką klaidos paveiksliuką
                 rec['th_scr_url'] = 'https://picsum.photos/135'
     return render_template('home.html', data = mongo_data, pagination =pagination, tags=session['tag_filter'], data_filter = filter, search = search_string)
-
-
-@app.route('/search/', methods=["GET", "POST"])
-def showSome():
-    sort = [('modified',-1)]
-    filter = base_filter.copy()
-    #if not 'tag_filter' in session:
-    #    session['tag_filter'] = []
-    #if session['tag_filter'] != []:
-    #    filter['tags'] = {'$all':session['tag_filter'].copy()}
-
-    current_page = request.args.get(get_page_parameter(), type=int, default=1)
-    search_string = request.args.get('s', type=str, default='oi')
-    print('\n\n{}\n\n'.format(search_string))
-    if search_string !='':
-        filter['ad_text'] = { '$regex' :search_string}
-
-
-    pagination =Pagination(page=current_page, total=db.skelbimai.count_documents(filter), per_page= per_page, css_framework='bootstrap', bs_version='4')
-
-    mongo_data = list(db.skelbimai.find(filter).sort(sort).skip((current_page-1)*per_page).limit(per_page))
-
-    for rec in mongo_data:
-        if 'photos' in rec:
-            for index, img in enumerate(rec['photos']):
-                if index > 4 : pass
-                img['th_url'] = url_for_resized_image(img['local_file'], '135x135')
-        if 'screenshot' in rec:
-            img_path = None
-            img_path = (rec['screenshot']).replace('\\','/')
-            try:
-                rec['th_scr_url']=url_for_resized_image(img_path, '135x135')
-            except:
-                img['th_url'] = 'https://picsum.photos/135'
-    return render_template('home.html', data = mongo_data, pagination =pagination, tags=session['tag_filter'], data_filter = filter)
 
 @app.route('/zoom/<id>', methods=["GET",])
 def zoom_ad(id):
