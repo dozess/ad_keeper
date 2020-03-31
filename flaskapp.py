@@ -118,9 +118,6 @@ def test():
     url = url_for_resized_image(mongo_data['screenshot'], dim='100x200')
     return render_template('text_test.html', data = mongo_data, image = url)
 
-
-
-
 @app.route('/', methods=["GET", "POST"])
 def showAll():
     sort = [('modified',-1)]
