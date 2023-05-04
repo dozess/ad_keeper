@@ -1,6 +1,6 @@
 argh==0.26.2
 click==7.1.1
-Flask==1.1.1
+Flask==2.2.5
 flask-paginate==0.5.5
 Flask-Resize==2.0.4
 itsdangerous==1.1.0
